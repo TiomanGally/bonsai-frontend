@@ -1,0 +1,45 @@
+.bonsai-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 24px;
+  padding: 24px;
+}
+
+.bonsai-card {
+  width: 300px;
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.content {
+  margin-top: 64px; /* Platz für die fixierte Toolbar schaffen (64px ist die Standardhöhe von mat-toolbar) */
+  padding: 16px;
+}
+
+.bonsai-header {
+  position: sticky;
+  padding: 1vh 1vw;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Elemente verteilen */
+}
+
+.bonsai-search {
+  flex-grow: 1; /* Lässt das Suchfeld den restlichen Platz einnehmen */
+  max-width: 85vw; /* Damit die Suche nicht zu breit wird */
+}
+
+.add-button {
+  position: fixed;
+  bottom: 1vh;
+  right: 1vw;
+  z-index: 1000;
+}

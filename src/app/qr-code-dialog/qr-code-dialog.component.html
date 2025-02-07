@@ -1,0 +1,6 @@
+<mat-dialog-content>
+  <img [attr.src]="imageUrl$ | async" width="200" height="200" alt="QR Code">
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+</mat-dialog-actions>

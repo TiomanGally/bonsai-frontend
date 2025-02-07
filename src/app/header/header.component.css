@@ -1,0 +1,33 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px; /* Falls deine Toolbar 64px hoch ist */
+  z-index: 1000; /* Damit sie über allem liegt */
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.weather-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clickable-title {
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}

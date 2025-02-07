@@ -1,0 +1,44 @@
+@if (!qrCode) {
+  <h2 mat-dialog-title>Add new Bonsai</h2>
+  <mat-dialog-content>
+    <form [formGroup]="bonsaiForm">
+      <mat-form-field appearance="fill">
+        <mat-label>Botanic Name</mat-label>
+        <input matInput formControlName="latinName" required/>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Simple Name</mat-label>
+        <input matInput formControlName="simpleName"/>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Growing Date</mat-label>
+        <input matInput formControlName="birthDate" type="date"/>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Price</mat-label>
+        <input matInput formControlName="price" type="number" min="0"/>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Last Repoted</mat-label>
+        <input matInput type="date" formControlName="lastRepoted"/>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-button color="primary" (click)="submit()">Save</button>
+  </mat-dialog-actions>
+} @else {
+  <mat-dialog-content>
+    <img [attr.src]="qrCode" alt="QR Code" width="200" height="200">
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cancel</button>
+  </mat-dialog-actions>
+}

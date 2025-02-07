@@ -1,0 +1,108 @@
+<div class="bonsai-container" *ngIf="bonsai$ | async as bonsai">
+  <div class="bonsai-header">
+    <h1>{{ bonsai.latinName }}
+      <button mat-icon-button matSuffix color="primary" (click)="wasRepotted()">
+        <span class="material-symbols-outlined">potted_plant</span>
+      </button>
+      <button color="primary" mat-icon-button aria-label="QR Code" (click)="showQrCode(bonsai.uuid)">
+        <mat-icon>qr_code_2</mat-icon>
+      </button>
+    </h1>
+    @if (bonsai.simpleName) {
+      <p>({{ bonsai.simpleName }})</p>
+    }
+  </div>
+
+  <table class="bonsai-details">
+    <tr>
+      <td><strong>Last Repotted:</strong></td>
+      <td>{{ bonsai.lastRepoted | date:'MM/yy' }}</td>
+    </tr>
+    <tr>
+      <td><strong>Age:</strong></td>
+      <td>{{ bonsai.birthDate | ageDifference }}</td>
+    </tr>
+    <tr>
+      <td><strong>Preis:</strong></td>
+      <td>
+        <span *ngIf="bonsai.price > 0">{{ bonsai.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+        <span *ngIf="bonsai.price === 0">€-</span>
+      </td>
+    </tr>
+  </table>
+
+  <mat-divider></mat-divider>
+
+  <div class="content-filter-and-sorting-options">
+    <div class="file-upload-container">
+      <label class="file-input-label" (click)="fileInput.click()">
+        <span>Bilder auswählen</span>
+      </label>
+
+      <input #fileInput type="file" (change)="onFilesSelected($event)" accept="image/*" multiple hidden>
+
+      <button mat-icon-button color="primary" (click)="uploadImages()" [disabled]="!selectedFiles.length">
+        <mat-icon>upload</mat-icon>
+      </button>
+    </div>
+    <mat-paginator [length]="100"
+                   [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   (page)="onPicturePageChange($event)"
+                   aria-label="Select page">
+    </mat-paginator>
+  </div>
+
+  <div class="content-list">
+    @for (picture of pictures; track picture) {
+      <mat-card class="picture-card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ picture.createdAt || 'No Title'}}</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image [attr.src]="picture.imageUrl" alt="Photo of Bonsai">
+      </mat-card>
+    }
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="content-filter-and-sorting-options">
+    <!-- Eingabefeld für Notizen -->
+    <mat-form-field appearance="fill">
+      <mat-label>Add Note</mat-label>
+      <input matInput (keydown.enter)="addNote()" [(ngModel)]="newNoteContent"/>
+      <button mat-icon-button matSuffix color="primary" (click)="addNote()">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <!-- Paginator für die Notizen -->
+    <mat-paginator [length]="100"
+                   [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   (page)="onNotesPageChange($event)"
+                   aria-label="Select page">
+    </mat-paginator>
+  </div>
+
+
+  <div class="content-list">
+    @for (note of notes; track note) {
+      <mat-card class="note-card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>{{ note.createdAt }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>{{ note.content }}</mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-icon-button (click)="deleteNote(note.uuid)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+</div>
+
+<div class="actions">
+  <button color="primary" mat-raised-button routerLink="/">Back</button>
+</div>
