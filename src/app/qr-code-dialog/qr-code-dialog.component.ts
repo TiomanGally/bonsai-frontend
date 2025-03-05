@@ -19,9 +19,8 @@ import {AsyncPipe} from '@angular/common';
 export class QrCodeDialogComponent {
   private data: { bonsaiId: string } = inject(MAT_DIALOG_DATA)
   private backendService = inject(BackendService)
-  private qrCodeDialog = inject(MatDialogRef<QrCodeDialogComponent>,)
-
   imageUrl$: Observable<string> = this.backendService.getQrCodeForBonsai(this.data.bonsaiId);
+  private qrCodeDialog = inject(MatDialogRef<QrCodeDialogComponent>,)
 
   close(): void {
     this.qrCodeDialog.close();

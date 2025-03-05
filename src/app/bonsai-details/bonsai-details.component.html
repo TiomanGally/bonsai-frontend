@@ -1,10 +1,10 @@
-<div class="bonsai-container" *ngIf="bonsai$ | async as bonsai">
+<div *ngIf="bonsai$ | async as bonsai" class="bonsai-container">
   <div class="bonsai-header">
     <h1>{{ bonsai.latinName }}
-      <button mat-icon-button matSuffix color="primary" (click)="wasRepotted()">
+      <button (click)="wasRepotted()" color="primary" mat-icon-button matSuffix>
         <span class="material-symbols-outlined">potted_plant</span>
       </button>
-      <button color="primary" mat-icon-button aria-label="QR Code" (click)="showQrCode(bonsai.uuid)">
+      <button (click)="showQrCode(bonsai.uuid)" aria-label="QR Code" color="primary" mat-icon-button>
         <mat-icon>qr_code_2</mat-icon>
       </button>
     </h1>
@@ -35,20 +35,20 @@
 
   <div class="content-filter-and-sorting-options">
     <div class="file-upload-container">
-      <label class="file-input-label" (click)="fileInput.click()">
+      <label (click)="fileInput.click()" class="file-input-label">
         <span>Bilder auswählen</span>
       </label>
 
-      <input #fileInput type="file" (change)="onFilesSelected($event)" accept="image/*" multiple hidden>
+      <input #fileInput (change)="onFilesSelected($event)" accept="image/*" hidden multiple type="file">
 
-      <button mat-icon-button color="primary" (click)="uploadImages()" [disabled]="!selectedFiles.length">
+      <button (click)="uploadImages()" [disabled]="!selectedFiles.length" color="primary" mat-icon-button>
         <mat-icon>upload</mat-icon>
       </button>
     </div>
-    <mat-paginator [length]="100"
-                   [pageSize]="10"
+    <mat-paginator (page)="onPicturePageChange($event)"
+                   [length]="100"
                    [pageSizeOptions]="[5, 10, 25, 100]"
-                   (page)="onPicturePageChange($event)"
+                   [pageSize]="10"
                    aria-label="Select page">
     </mat-paginator>
   </div>
@@ -57,7 +57,7 @@
     @for (picture of pictures; track picture) {
       <mat-card class="picture-card" appearance="outlined">
         <mat-card-header>
-          <mat-card-title>{{ picture.createdAt || 'No Title'}}</mat-card-title>
+          <mat-card-title>{{ picture.createdAt || 'No Title' }}</mat-card-title>
         </mat-card-header>
         <img mat-card-image [attr.src]="picture.imageUrl" alt="Photo of Bonsai">
       </mat-card>
@@ -70,17 +70,17 @@
     <!-- Eingabefeld für Notizen -->
     <mat-form-field appearance="fill">
       <mat-label>Add Note</mat-label>
-      <input matInput (keydown.enter)="addNote()" [(ngModel)]="newNoteContent"/>
-      <button mat-icon-button matSuffix color="primary" (click)="addNote()">
+      <input (keydown.enter)="addNote()" [(ngModel)]="newNoteContent" matInput/>
+      <button (click)="addNote()" color="primary" mat-icon-button matSuffix>
         <mat-icon>add</mat-icon>
       </button>
     </mat-form-field>
 
     <!-- Paginator für die Notizen -->
-    <mat-paginator [length]="100"
-                   [pageSize]="10"
+    <mat-paginator (page)="onNotesPageChange($event)"
+                   [length]="100"
                    [pageSizeOptions]="[5, 10, 25, 100]"
-                   (page)="onNotesPageChange($event)"
+                   [pageSize]="10"
                    aria-label="Select page">
     </mat-paginator>
   </div>

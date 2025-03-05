@@ -46,7 +46,7 @@ export class BonsaiDialogComponent {
   submit(): void {
     if (this.bonsaiForm.valid) {
       this.backendService.createBonsai(this.bonsaiForm.value).subscribe((qrCode) => {
-         this.qrCode = qrCode;
+        this.qrCode = qrCode;
       });
     }
   }

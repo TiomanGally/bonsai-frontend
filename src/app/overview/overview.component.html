@@ -1,34 +1,36 @@
-<div class="content" *ngIf="bonsais$ | async as bonsais">
-  <div *ngIf="bonsais.length === 0">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-  </div>
-  <div class="bonsai-header">
-    <p>Total Bonsais: {{ (filteredBonsais$ | async)?.length }}</p>
-    <mat-form-field class="bonsai-search">
-      <mat-label>Search Bonsai</mat-label>
-      <input matInput [ngModel]="name$ | async" (ngModelChange)="name$.next($event)"/>
-    </mat-form-field>
+@if (authService.isAuthenticated()) {
+  <div *ngIf="bonsais$ | async as bonsais" class="content">
+    <div *ngIf="bonsais.length === 0">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div class="bonsai-header">
+      <p>Total Bonsais: {{ (filteredBonsais$ | async)?.length }}</p>
+      <mat-form-field class="bonsai-search">
+        <mat-label>Search Bonsai</mat-label>
+        <input (ngModelChange)="name$.next($event)" [ngModel]="name$ | async" matInput/>
+      </mat-form-field>
+    </div>
+
+    <div class="bonsai-list">
+      @for (bonsai of filteredBonsais$ | async; track bonsai.uuid) {
+        <mat-card class="bonsai-card">
+          <mat-card-header [routerLink]="['/bonsais', bonsai.uuid]">
+            <mat-card-title>{{ bonsai.latinName }}</mat-card-title>
+            <mat-card-subtitle *ngIf="bonsai.simpleName">({{ bonsai.simpleName }})</mat-card-subtitle>
+            <mat-card-subtitle>{{ bonsai.price | currency:'EUR':'symbol':'1.2-2' }}</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-actions align="end">
+            <button mat-icon-button color="secondary" aria-label="QR Code" (click)="showQrCode(bonsai.uuid)">
+              <mat-icon>qr_code_2</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
   </div>
 
-  <div class="bonsai-list">
-    @for (bonsai of filteredBonsais$ | async; track bonsai.uuid) {
-      <mat-card class="bonsai-card">
-        <mat-card-header [routerLink]="['/bonsais', bonsai.uuid]">
-          <mat-card-title>{{ bonsai.latinName }}</mat-card-title>
-          <mat-card-subtitle *ngIf="bonsai.simpleName">({{ bonsai.simpleName }})</mat-card-subtitle>
-          <mat-card-subtitle>{{ bonsai.price | currency:'EUR':'symbol':'1.2-2' }}</mat-card-subtitle>
-        </mat-card-header>
-
-        <mat-card-actions align="end">
-          <button mat-icon-button color="secondary" aria-label="QR Code" (click)="showQrCode(bonsai.uuid)">
-            <mat-icon>qr_code_2</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    }
-  </div>
-</div>
-
-<button mat-fab color="primary" matTooltip="Add new Bonsai" class="add-button" (click)="openDialog()">
-  <mat-icon>add</mat-icon>
-</button>
+  <button (click)="openDialog()" class="add-button" color="primary" mat-fab matTooltip="Add new Bonsai">
+    <mat-icon>add</mat-icon>
+  </button>
+}

@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {BackendService} from '../http/backend.service';
-import {AsyncPipe, CurrencyPipe, NgForOf, NgIf} from '@angular/common';
+import {AsyncPipe, CurrencyPipe, NgIf} from '@angular/common';
 import {MatCard, MatCardActions, MatCardHeader, MatCardSubtitle, MatCardTitle} from '@angular/material/card';
 import {MatFabButton, MatIconButton} from '@angular/material/button';
 import {MatProgressBar} from '@angular/material/progress-bar';
@@ -14,11 +14,11 @@ import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {BehaviorSubject, combineLatest, map} from 'rxjs';
+import {BonsaiAuthService} from '../bonsai-auth.service';
 
 @Component({
   selector: 'app-overview',
   imports: [
-    NgForOf,
     NgIf,
     MatCard,
     MatCardHeader,
@@ -42,10 +42,10 @@ import {BehaviorSubject, combineLatest, map} from 'rxjs';
   styleUrl: './overview.component.css'
 })
 export class OverviewComponent {
-  private backendService = inject(BackendService);
-  private matDialog = inject(MatDialog);
-  bonsais$ = this.backendService.getBonsais()
   readonly name$ = new BehaviorSubject<string>('');
+  private backendService = inject(BackendService);
+  authService = inject(BonsaiAuthService);
+  bonsais$ = this.backendService.getBonsais()
   filteredBonsais$ = combineLatest([this.bonsais$, this.name$]).pipe(
     map(([bonsais, name]) =>
       bonsais.filter(bonsai =>
@@ -53,6 +53,7 @@ export class OverviewComponent {
         bonsai.simpleName?.toLowerCase().includes(name.toLowerCase())
       ))
   )
+  private matDialog = inject(MatDialog);
 
   openDialog(): void {
     this.matDialog.open(BonsaiDialogComponent);

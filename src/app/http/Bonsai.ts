@@ -7,6 +7,11 @@ export interface Bonsai {
   price: number;
 }
 
+export interface User {
+  name: string,
+  email: string
+}
+
 export interface CreateBonsaiRequestBody {
   latinName: string;
   simpleName?: string;

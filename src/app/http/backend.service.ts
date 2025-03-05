@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {catchError, forkJoin, map, Observable, of, switchMap, timeout} from 'rxjs';
-import {Bonsai, CreateBonsaiRequestBody, Note, Picture} from './Bonsai';
+import {Bonsai, CreateBonsaiRequestBody, Note, Picture, User} from './Bonsai';
 import {WeatherData} from './WeatherData';
 
 @Injectable({
@@ -9,8 +9,9 @@ import {WeatherData} from './WeatherData';
 })
 export class BackendService {
   private BASE_URL = 'http://localhost:8123'
-  private API_URL = '/api/v1/bonsais';
+  private BONSAI_URL = '/api/v1/bonsais';
   private WEATHER_URL = '/api/v1/weather';
+  private USER_URL = '/api/v1/user';
 
   constructor(private httpClient: HttpClient) {
   }
@@ -35,48 +36,35 @@ export class BackendService {
     );
   }
 
-  private mapWeatherName(weather: string): string {
-    switch (weather.toLowerCase()) {
-      case 'rain':
-        return 'rainy';
-      case 'snow':
-        return 'weather_snowy'
-      case 'clouds':
-        return 'cloudy'
-      case 'clear':
-        return 'sunny'
-      case 'sun':
-        return 'sunny'; // thunderstorm
-      default:
-        return 'block';
-    }
+  getCurrentUserInformation() {
+    return this.httpClient.get<User>(this.BASE_URL + this.USER_URL)
   }
 
   getBonsais(): Observable<Bonsai[]> {
-    return this.httpClient.get<Bonsai[]>(this.BASE_URL + this.API_URL);
+    return this.httpClient.get<Bonsai[]>(this.BASE_URL + this.BONSAI_URL);
   }
 
   getBonsaiById(id: string): Observable<Bonsai> {
-    return this.httpClient.get<Bonsai>(this.BASE_URL + this.API_URL + '/' + id);
+    return this.httpClient.get<Bonsai>(this.BASE_URL + this.BONSAI_URL + '/' + id);
   }
 
   getAllNotesByBonsaiId(id: string, page: number, pageSize: number): Observable<Note[]> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('pageSize', pageSize.toString())
-    return this.httpClient.get<Note[]>(this.BASE_URL + this.API_URL + '/' + id + '/notes', {params})
+    return this.httpClient.get<Note[]>(this.BASE_URL + this.BONSAI_URL + '/' + id + '/notes', {params})
   }
 
   addNoteToBonsai(bonsaiId: string, note: Partial<Note>): Observable<Note> {
-    return this.httpClient.post<Note>(this.BASE_URL + this.API_URL + '/' + bonsaiId + '/notes', note);
+    return this.httpClient.post<Note>(this.BASE_URL + this.BONSAI_URL + '/' + bonsaiId + '/notes', note);
   }
 
   deleteNote(noteId: string): Observable<void> {
-    return this.httpClient.delete<void>(this.BASE_URL + this.API_URL + '/notes/' + noteId);
+    return this.httpClient.delete<void>(this.BASE_URL + this.BONSAI_URL + '/notes/' + noteId);
   }
 
   createBonsai(bonsai: CreateBonsaiRequestBody): Observable<string> {
-    return this.httpClient.post(this.BASE_URL + this.API_URL, bonsai, {responseType: 'blob', observe: 'response'})
+    return this.httpClient.post(this.BASE_URL + this.BONSAI_URL, bonsai, {responseType: 'blob', observe: 'response'})
       .pipe(
         map(response => {
           // Returns the newly generated qr code of the bonsai
@@ -86,7 +74,7 @@ export class BackendService {
   }
 
   uploadPictures(bonsaiId: string, formData: FormData): Observable<void> {
-    return this.httpClient.post<void>(`${this.BASE_URL}${this.API_URL}/${bonsaiId}/pictures`, formData);
+    return this.httpClient.post<void>(`${this.BASE_URL}${this.BONSAI_URL}/${bonsaiId}/pictures`, formData);
   }
 
   getPicturesByBonsaiId(bonsaiId: string, page: number, pageSize: number): Observable<Picture[]> {
@@ -95,7 +83,7 @@ export class BackendService {
       .set('pageSize', pageSize.toString())
 
     return this.httpClient
-      .get<string[]>(`${this.BASE_URL}${this.API_URL}/${bonsaiId}/pictures`, {params})
+      .get<string[]>(`${this.BASE_URL}${this.BONSAI_URL}/${bonsaiId}/pictures`, {params})
       .pipe(
         switchMap((pictureIds: string[]) => {
           if (pictureIds.length === 0) {
@@ -103,7 +91,7 @@ export class BackendService {
           }
           return forkJoin(
             pictureIds.map(pictureId =>
-              this.httpClient.get(this.BASE_URL + this.API_URL + '/pictures/' + pictureId, {
+              this.httpClient.get(this.BASE_URL + this.BONSAI_URL + `/${bonsaiId}/pictures/${pictureId}`, {
                 responseType: 'blob',
                 observe: 'response'
               }).pipe(
@@ -128,7 +116,7 @@ export class BackendService {
 
   getQrCodeForBonsai(bonsaiId: string): Observable<string> {
     return this.httpClient
-      .get(this.BASE_URL + this.API_URL + '/' + bonsaiId + '/qr-code', {
+      .get(this.BASE_URL + this.BONSAI_URL + '/' + bonsaiId + '/qr-code', {
         responseType: 'blob',
         observe: 'response'
       }).pipe(
@@ -140,6 +128,23 @@ export class BackendService {
   }
 
   updateBonsai(bonsaiId: string, bonsai: Bonsai): Observable<void> {
-    return this.httpClient.put<void>(this.BASE_URL + this.API_URL + '/' + bonsaiId, bonsai);
+    return this.httpClient.put<void>(this.BASE_URL + this.BONSAI_URL + '/' + bonsaiId, bonsai);
+  }
+
+  private mapWeatherName(weather: string): string {
+    switch (weather.toLowerCase()) {
+      case 'rain':
+        return 'rainy';
+      case 'snow':
+        return 'weather_snowy'
+      case 'clouds':
+        return 'cloudy'
+      case 'clear':
+        return 'sunny'
+      case 'sun':
+        return 'sunny'; // thunderstorm
+      default:
+        return 'block';
+    }
   }
 }

@@ -41,25 +41,22 @@ import {MatCardModule} from '@angular/material/card';
   styleUrl: './bonsai-details.component.css'
 })
 export class BonsaiDetailsComponent implements OnInit {
-  private route = inject(ActivatedRoute)
-  private backendService = inject(BackendService)
-  private matDialog = inject(MatDialog)
-
   bonsaiId: string = ''
-  bonsai$ = this.route.params.pipe(switchMap(params => {
-    const bonsaiId = params["id"] as string;
-    return this.backendService.getBonsaiById(bonsaiId)
-  }));
   newNoteContent: string = '';
-
   picturePage: number = 1;
   picturePageSize: number = 25;
   notesPage: number = 1;
   notesPageSize: number = 25;
-
   selectedFiles: File[] = [];
   notes: Note[] = [];
   pictures: Picture[] = [];
+  private route = inject(ActivatedRoute)
+  private backendService = inject(BackendService)
+  bonsai$ = this.route.params.pipe(switchMap(params => {
+    const bonsaiId = params["id"] as string;
+    return this.backendService.getBonsaiById(bonsaiId)
+  }));
+  private matDialog = inject(MatDialog)
 
   ngOnInit(): void {
     const bonsaiId = this.route.snapshot.paramMap.get('id');
